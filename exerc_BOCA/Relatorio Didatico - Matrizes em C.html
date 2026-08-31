@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório Didático — Matrizes em C (apoio ao ex11)</title>
+<style>
+  :root{
+    --azul:#1f4e79;
+    --azul-claro:#e8f0f8;
+    --verde:#2e7d32;
+    --vermelho:#c62828;
+    --cinza:#f5f5f5;
+    --borda:#d0d7de;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height:1.65;
+    color:#222;
+    background:#fff;
+    margin:0;
+    padding:0;
+  }
+  header{
+    background:linear-gradient(135deg,#1f4e79,#2e6da4);
+    color:#fff;
+    padding:2.5rem 2rem;
+    border-bottom:6px solid #f9a825;
+  }
+  header h1{margin:0 0 .3rem;font-size:1.9rem;}
+  header p{margin:.2rem 0;opacity:.92;font-size:1.05rem;}
+  main{max-width:960px;margin:0 auto;padding:2rem 1.5rem;}
+  section{margin-bottom:2.8rem;}
+  h2{
+    color:var(--azul);
+    border-bottom:2px solid var(--azul-claro);
+    padding-bottom:.4rem;
+    margin-top:2rem;
+    font-size:1.5rem;
+  }
+  h3{color:var(--azul);margin-top:1.5rem;}
+  h4{color:#2e6da4;margin-top:1.2rem;}
+  code,kbd{
+    background:var(--cinza);
+    border:1px solid var(--borda);
+    border-radius:4px;
+    padding:.05rem .35rem;
+    font-family:'Consolas','Courier New',monospace;
+    font-size:.92em;
+  }
+  pre{
+    background:#282c34;
+    color:#e6e6e6;
+    padding:1rem 1.2rem;
+    border-radius:8px;
+    overflow-x:auto;
+    font-family:'Consolas','Courier New',monospace;
+    font-size:.92rem;
+    line-height:1.5;
+  }
+  pre code{background:transparent;border:none;color:inherit;padding:0;}
+  .bloco{
+    background:var(--cinza);
+    border-left:5px solid var(--azul);
+    padding:1rem 1.2rem;
+    border-radius:0 8px 8px 0;
+    margin:1rem 0;
+  }
+  .dica{
+    background:#fff8e1;
+    border-left:5px solid #f9a825;
+    padding:1rem 1.2rem;
+    border-radius:0 8px 8px 0;
+    margin:1rem 0;
+  }
+  .aviso{
+    background:#fdecea;
+    border-left:5px solid var(--vermelho);
+    padding:1rem 1.2rem;
+    border-radius:0 8px 8px 0;
+    margin:1rem 0;
+  }
+  .def{
+    background:var(--azul-claro);
+    border-left:5px solid var(--azul);
+    padding:1rem 1.2rem;
+    border-radius:0 8px 8px 0;
+    margin:1rem 0;
+  }
+  table{
+    border-collapse:collapse;
+    width:100%;
+    margin:1rem 0;
+    font-size:.95rem;
+  }
+  th,td{
+    border:1px solid var(--borda);
+    padding:.5rem .7rem;
+    text-align:center;
+  }
+  th{background:var(--azul-claro);color:var(--azul);}
+  .matriz{margin:1rem auto;}
+  .matriz table{width:auto;margin:.5rem auto;}
+  .matriz td{width:2.6rem;height:2.2rem;}
+  .destaque{color:var(--verde);font-weight:600;}
+  .neg{color:var(--vermelho);font-weight:600;}
+  ul,ol{padding-left:1.5rem;}
+  li{margin:.35rem 0;}
+  .passo{
+    counter-reset:passo;
+  }
+  .passo > li{
+    list-style:none;
+    counter-increment:passo;
+    background:var(--cinza);
+    border-radius:8px;
+    padding:.8rem 1rem .8rem 3rem;
+    margin:.7rem 0;
+    position:relative;
+  }
+  .passo > li::before{
+    content:counter(passo);
+    position:absolute;
+    left:.8rem;top:.9rem;
+    width:1.6rem;height:1.6rem;
+    background:var(--azul);
+    color:#fff;
+    border-radius:50%;
+    text-align:center;
+    line-height:1.6rem;
+    font-weight:bold;
+  }
+  footer{
+    text-align:center;
+    padding:2rem;
+    color:#888;
+    font-size:.85rem;
+    border-top:1px solid var(--borda);
+    margin-top:2rem;
+  }
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Relatório Didático — Matrizes em C</h1>
+  <p>Conceitos, teoria e exemplos passo a passo para resolver o exercício <strong>ex11 — Manipulação de Matrizes 1</strong></p>
+  <p><em>Material de apoio para estudo. Nenhuma solução final é fornecida — apenas a explicação dos conceitos.</em></p>
+</header>
+
+<main>
+
+<!-- ==================== 1. INTRODUÇÃO ==================== -->
+<section>
+<h2>1. O que é uma matriz? O conceito por trás do problema</h2>
+<p>
+Na Matemática e na Computação, uma <strong>matriz</strong> é uma coleção de elementos do <strong>mesmo tipo</strong> (inteiros, reais, etc.) organizados em <strong>linhas e colunas</strong>. Ela é um <em>conceito abstrato</em>: imaginamos os dados "esticados" em uma grade, mas, na memória do computador, tudo é armazenado de forma sequencial e linear.
+</p>
+
+<p>Quando falamos de uma matriz <strong>bidimensional</strong> de ordem <code>m × n</code> (lê-se "m por n"), queremos dizer:</p>
+<ul>
+  <li><code>m</code> → número de <strong>linhas</strong>;</li>
+  <li><code>n</code> → número de <strong>colunas</strong>;</li>
+  <li>Cada posição guarda um valor <code>a<sub>i,j</sub></code>, onde <code>i</code> é a linha e <code>j</code> é a coluna.</li>
+</ul>
+
+<div class="def">
+<strong>Notação importante (vírgula dupla no problema):</strong> no texto do exercício a posição é escrita como <code>a<sub>i,j</sub></code>. Isso significa o elemento que está na <strong>linha i</strong> e na <strong>coluna j</strong>. Em C, usando a convenção habitual, esse mesmo elemento é acessado como <code>A[i-1][j-1]</code>, pois em C os índices começam em 0.
+</div>
+
+<div class="matriz">
+<p style="text-align:center"><strong>Exemplo visuol: matriz 2 × 3</strong></p>
+<table>
+  <tr><td>a<sub>1,1</sub></td><td>a<sub>1,2</sub></td><td>a<sub>1,3</sub></td></tr>
+  <tr><td>a<sub>2,1</sub></td><td>a<sub>2,2</sub></td><td>a<sub>2,3</sub></td></tr>
+</table>
+<p style="text-align:center;color:#666;font-size:.88rem">Primeiro índice = linha, segundo = coluna.</p>
+</div>
+
+<p>No <strong>ex11</strong>, você vai ler duas matrizes, <code>A</code> e <code>B</code>, ambas de ordem <code>m × n</code>, depois aplicar uma operação indicada por um caractere (<code>'+'</code> ou <code>'x'</code>). Para isso, os conceitos de <em>declaração</em>, <em>alocação</em> e <em>leitura/escrita</em> de matrizes são o alicerce.</p>
+</section>
+
+<!-- ==================== 2. MATRIZES EM C ==================== -->
+<section>
+<h2>2. Como representar uma matriz na linguagem C</h2>
+
+<p>A linguagem C <strong>não possui um tipo nativo "matriz"</strong>. O que existe é o <em>vetor</em> (array), e uma matriz bidimensional nada mais é que um <strong>vetor de vetores</strong>. Existem três formas clássicas de representá-la:</p>
+
+<h3>2.1 Matriz estática (dimensões conhecidas em tempo de compilação)</h3>
+<p>Quando sabemos de antemão o tamanho, declaramos diretamente as dimensões. Como no ex11 os valores estão limitados a <code>1 ≤ m,n ≤ 10</code>, é totalmente viável usar uma matriz estática.</p>
+<pre><code>#define MAX 10
+int A[MAX][MAX];   // matriz estática 10x10
+int B[MAX][MAX];
+int C[MAX][MAX];   // guardará o resultado</code></pre>
+
+<div class="bloco">
+<strong>Como se lê/escreve um elemento?</strong>
+<pre><code>int x = A[i][j];      // ler o valor na linha i, coluna j
+A[i][j] = valor;      // gravar um valor</code></pre>
+</div>
+
+<h3>2.2 Matriz dinâmica "simulada" com um vetor unidimensional</h3>
+<p>Como a memória é linear, é possível alocar o espaço das <code>m × n</code> posições em um único vetor e "simular" o acesso bidimensional com aritmética de índices:</p>
+<pre><code>int *A = (int*) malloc(m * n * sizeof(int));
+// acessar o elemento da linha i, coluna j:
+A[i * n + j] = 0;    // POR QUE i*n + j ? Veja adiante.</code></pre>
+
+<h3>2.3 Matriz orientada a ponteiros (vetor de ponteiros)</h3>
+<p>Nesse modelo, criamos um vetor de ponteiros, em que cada ponteiro aponta para uma "linha" alocada separadamente:</p>
+<pre><code>int **A = (int**) malloc(m * sizeof(int*));
+for (int i = 0; i &lt; m; i++) {
+    A[i] = (int*) malloc(n * sizeof(int));
+}
+// acesso: A[i][j]</code></pre>
+
+<div class="dica">
+<strong>Qual usar no ex11?</strong> Como <code>m,n ≤ 10</code>, a matriz <strong>estática</strong> é a escolha mais simples e suficiente. Bastam três delas: <code>A</code>, <code>B</code> e a de resultado.
+</div>
+
+<h3>2.4 O modelo "Row-Major" e o endereço <code>A[i*n + j]</code></h3>
+<p>
+C armazena matrizes no formato <strong>Row-Major Order</strong>: os elementos de cada <strong>linha</strong> são guardados de forma <strong>contígua</strong> (um após o outro) na memória. A linha 0 completa, depois a linha 1, e assim por diante.
+</p>
+<div class="matriz">
+<p style="text-align:center"><strong>Como a matriz 2×3 é guardada na memória</strong></p>
+<table>
+  <tr><td>&lt;end&gt;</td><td>&lt;end+1&gt;</td><td>&lt;end+2&gt;</td><td>&lt;end+3&gt;</td><td>&lt;end+4&gt;</td><td>&lt;end+5&gt;</td></tr>
+  <tr><td>A[0][0]</td><td>A[0][1]</td><td>A[0][2]</td><td>A[1][0]</td><td>A[1][1]</td><td>A[1][2]</td></tr>
+</table>
+</div>
+<p>
+Por causa disso, num vetor unidimensional de <code>n</code> colunas, o elemento da linha <code>i</code> e coluna <code>j</code> está na posição <strong><code>i*n + j</code></strong>: são <code>i</code> linhas inteiras (cada uma com <code>n</code> elementos) que vêm antes, mais <code>j</code> elementos dentro da linha.
+</p>
+</section>
+
+<!-- ==================== 3. PONTEIROS ==================== -->
+<section>
+<h2>3. Aritmética de ponteiros (o que está por trás de <code>A[i][j]</code>)</h2>
+<p>
+Em C, o nome de um vetor é, na prática, um <strong>ponteiro para o primeiro elemento</strong>. Quando escrevemos <code>A[i][j]</code>, o compilador transforma isso em aritmética de ponteiro.
+</p>
+<pre><code>A[i][j]  é  equivalente a  *(*(A + i) + j)
+
+// Pensando em A como um único vetor:
+A[i * n + j]  é  *(A + (i*n + j))</code></pre>
+<div class="bloco">
+<strong>Por que isso importa?</strong> Entender essa equivalência explica por que <code>A[i*n + j]</code> (matriz "achatada") e <code>A[i][j]</code> (matriz bidimensional) são formas de acessar o mesmo dado. No ex11, você pode usar qualquer uma delas, desde que seja consistente.
+</div>
+</section>
+
+<!-- ==================== 4. OPERAÇÕES ==================== -->
+<section>
+<h2>4. As operações do problema: Adição e Multiplicação</h2>
+<p>
+Agora vamos às duas operações que o ex11 pede. A compreensão de <strong>quando cada uma é válida</strong> é o coração do exercício — especialmente para saber quando imprimir <code>ERROR</code>.
+</p>
+
+<h3>4.1 Adição de matrizes (<code>A + B</code>)</h3>
+<div class="def">
+<strong>Regra:</strong> a adição só existe quando <strong>A e B têm a mesma dimensão</strong> (mesmo número de linhas <code>m</code> e mesmo número de colunas <code>n</code>). O resultado tem a mesma dimensão e cada elemento é a soma dos elementos correspondentes:
+<br><br>
+<strong><code>C[i][j] = A[i][j] + B[i][j]</code></strong> &nbsp; para todo <code>i</code> e <code>j</code>.
+</div>
+
+<div class="matriz">
+<p style="text-align:center"><strong>Exemplo do próprio ex11 (dimensão 2×3)</strong></p>
+<table>
+  <tr>
+    <th>A</th><th></th><th>B</th><th></th><th>A + B</th>
+  </tr>
+  <tr>
+    <td>1 2 3<br>4 5 6</td>
+    <td>+</td>
+    <td>6 5 4<br>3 2 1</td>
+    <td>=</td>
+    <td>7 7 7<br>7 7 7</td>
+  </tr>
+</table>
+<p style="text-align:center;color:#666;font-size:.88rem">Cada célula é a soma das duas células na mesma linha e coluna: 1+6=7, 2+5=7, ...</p>
+</div>
+
+<div class="bloco">
+<strong>Estrutura de laços (não é resposta, é o <em>raciocínio</em>):</strong>
+<pre><code>// Para cada linha i
+//    Para cada coluna j
+//        C[i][j] = A[i][j] + B[i][j];</code></pre>
+<p>Dois loops aninhados percorrem todas as <code>m × n</code> posições. Complexidade temporal: <code>O(m·n)</code>.</p>
+</div>
+
+<h3>4.2 Multiplicação de matrizes (<code>A × B</code>)</h3>
+<div class="def">
+<strong>Regra de dimensões (o ponto crítico!):</strong> para multiplicar <code>A × B</code>, o número de <strong>colunas de A</strong> deve ser igual ao número de <strong>linhas de B</strong>.
+<br><br>
+Se <code>A</code> tem dimensão <code>m × n</code> e <code>B</code> tem dimensão <code>n × p</code>, então o produto existe e tem dimensão <code>m × p</code>.
+</div>
+
+<p>
+Repare: no ex11, ambas as matrizes <code>A</code> e <code>B</code> têm a <strong>mesma</strong> dimensão <code>m × n</code> (definida pela entrada). Então, para a multiplicação <code>A × B</code> ser válida, precisamos que as <strong>colunas de A (= n)</strong> sejam iguais às <strong>linhas de B (= m)</strong>. Ou seja:
+</p>
+
+<div class="aviso">
+<strong><code>A<sub>(m×n)</sub> × B<sub>(m×n)</sub></code> só existe se <code>n == m</code></strong> (matrizes quadradas). Se <code>m ≠ n</code>, a multiplicação é impossível → o programa deve imprimir <strong><code>ERROR</code></strong>.
+</div>
+
+<p>Veja por que essa é a chave dos exemplos:</p>
+<ul>
+  <li><strong>Exemplo 2 (2×3 com 'x'):</strong> <code>m=2, n=3</code> → como <code>m ≠ n</code>, não dá para multiplicar → <span class="neg">ERROR</span>.</li>
+  <li><strong>Exemplo 3 (2×2 com 'x'):</strong> <code>m=n=2</code> → é possível → imprime o produto 2×2.</li>
+</ul>
+<div class="matriz">
+<p style="text-align:center"><strong>Como o produto é <em>definido</em>:</strong></p>
+<table>
+  <tr>
+    <th></th><th>coluna 0 de B</th><th>coluna 1 de B</th>
+  </tr>
+  <tr>
+    <th>linha i de A</th>
+    <td>A[i][0]*B[0][0] + A[i][1]*B[1][0]</td>
+    <td>A[i][0]*B[0][1] + A[i][1]*B[1][1]</td>
+  </tr>
+</table>
+<p style="text-align:center;color:#666;font-size:.88rem">O produto C[i][j] é a soma dos produtos dos pares "linha i de A × coluna j de B" (produto escalar).</p>
+</div>
+
+<div class="bloco">
+<strong>Fórmula do produto:</strong>
+<div style="text-align:center;font-size:1.1rem;margin:.5rem 0">
+C[i][j] = Σ<sub>k</sub> A[i][k] · B[k][j]
+</div>
+<pre><code>// Raciocínio com três laços aninhados:
+for (i = 0; i &lt; m; i++)                 // linhas do resultado
+    for (j = 0; j &lt; p; j++)             // colunas do resultado
+        for (k = 0; k &lt; n; k++)         // acumula a soma
+            C[i][j] += A[i][k] * B[k][j];</code></pre>
+<p>Complexidade temporal da multiplicação clássica: <code>O(m·n·p)</code>. No ex11, como as duas matrizes são <code>m×n</code> e a condição é <code>m==n</code>, o produto é <code>m×m</code>.</p>
+</div>
+
+<div class="dica">
+<strong>Dica para quem começa no produto:</strong> antes de multiplicar, o resultado deve ser <em>iniciado em zero</em>. Cada posição do resultado é um <strong>acumulador</strong> (soma acumulada dos produtos). Se você esquecer de zerar, valores "lixo" da memória vão estragar o resultado.
+</div>
+</section>
+
+<!-- ==================== 5. EXEMPLO NUMÉRICO ==================== -->
+<section>
+<h2>5. Exemplo numérico passo a passo (produto 2×2)</h2>
+<p>Vamos seguir o exemplo 3 do ex11 e <strong>verificar o resultado</strong>, para você conferir sua lógica.</p>
+
+<div class="grid2">
+<div class="matriz">
+<p style="text-align:center"><strong>A (2×2)</strong></p>
+<table><tr><td>1</td><td>2</td></tr><tr><td>4</td><td>5</td></tr></table>
+</div>
+<div class="matriz">
+<p style="text-align:center"><strong>B (2×2)</strong></p>
+<table><tr><td>6</td><td>5</td></tr><tr><td>3</td><td>2</td></tr></table>
+</div>
+</div>
+
+<h4>Calculando C = A × B</h4>
+<ul>
+  <li><strong>C[0][0]</strong> = A[0][0]·B[0][0] + A[0][1]·B[1][0] = 1·6 + 2·3 = 6 + 6 = <span class="destaque">12</span></li>
+  <li><strong>C[0][1]</strong> = A[0][0]·B[0][1] + A[0][1]·B[1][1] = 1·5 + 2·2 = 5 + 4 = <span class="destaque">9</span></li>
+  <li><strong>C[1][0]</strong> = A[1][0]·B[0][0] + A[1][1]·B[1][0] = 4·6 + 5·3 = 24 + 15 = <span class="destaque">39</span></li>
+  <li><strong>C[1][1]</strong> = A[1][0]·B[0][1] + A[1][1]·B[1][1] = 4·5 + 5·2 = 20 + 10 = <span class="destaque">30</span></li>
+</ul>
+<div class="matriz">
+<p style="text-align:center"><strong>Resultado esperado</strong></p>
+<table><tr><td>12</td><td>9</td></tr><tr><td>39</td><td>30</td></tr></table>
+<p style="text-align:center;color:#666;font-size:.88rem">Confere com a saída do ex11! Use exemplos assim para depurar seu código.</p>
+</div>
+</section>
+
+<!-- ==================== 6. SOBRE O CACHE ==================== -->
+<section>
+<h2>6. (Aprofundamento) Por que a ordem dos laços importa</h2>
+<p>
+Como C guarda as matrizes em <strong>Row-Major</strong> (linhas contíguas), percorrer a matriz fazendo <code>i</code> (linha) no <strong>laço externo</strong> e <code>j</code> (coluna) no <strong>laço interno</strong> — acessando <code>A[i][j]</code> — aproveita a <strong>localidade espacial</strong> do cache: os elementos lidos estão lado a lado na memória.
+</p>
+<p>
+Por outro lado, inverter os laços — percorrendo colunas (<code>A[j][i]</code>) — faz "saltos" grandes de memória a cada iteração, gerando <strong>erros de cache</strong> e tornando o programa mais lento.
+</p>
+<div class="bloco">
+<strong>Conclusão prática:</strong> nos seus laços, coloque a <strong>linha no loop de fora</strong> e a <strong>coluna no loop de dentro</strong>. Isso mantém o acesso contíguo e o código mais eficiente.
+</div>
+</section>
+
+<!-- ==================== 7. LEITURA DA ENTRADA ==================== -->
+<section>
+<h2>7. Como ler a entrada do ex11</h2>
+<p>Antes de calcular, é preciso interpretar corretamente o que vem da entrada padrão. A sequência é sempre esta:</p>
+<ol class="passo">
+  <li>Ler dois inteiros: <code>m</code> e <code>n</code> (dimensões).</li>
+  <li>Ler <code>m</code> linhas × <code>n</code> números → matriz <code>A</code>.</li>
+  <li>Ler um único <strong>caractere</strong>: <code>'+'</code> (adição) ou <code>'x'</code> (multiplicação).</li>
+  <li>Ler <code>m</code> linhas × <code>n</code> números → matriz <code>B</code>.</li>
+  <li>Decidir a operação e imprimir o resultado (ou <code>ERROR</code>).</li>
+</ol>
+
+<div class="bloco">
+<strong>Atenção ao caractere e aos espaços:</strong> o caractere da operação vem em uma linha separada. Ao usar <code>scanf</code>, tenha cuidado para ler a "sobra" da linha anterior (como o <code>\n</code>). Regras de leitura adequadas evitam que <code>scanf</code> "pule" o espaço de forma inesperada. Faça a leitura na ordem correta, tratando cada tipo (<code>int</code> para números, <code>char</code> para a operação).
+</div>
+</section>
+
+<!-- ==================== 8. ESTRATÉGIA ==================== -->
+<section>
+<h2>8. Estratégia recomendada para resolver — sem dar a resposta</h2>
+<p>A seguir, uma sequência de decisões que o levam à solução. Reflita sobre cada passo e implemente por conta própria.</p>
+
+<ol class="passo">
+  <li>
+    <strong>Escolha a representação.</strong> Como <code>m,n ≤ 10</code>, uma matriz estática <code>int A[MAX][MAX]</code> (e análogas para <code>B</code> e resultado) resolve. Declare com constante <code>MAX</code>.
+  </li>
+  <li>
+    <strong>Leia <code>m</code> e <code>n</code>.</strong> Armazene-os para usar nos loops.
+  </li>
+  <li>
+    <strong>Leia a matriz <code>A</code>.</strong> Dois loops aninhados: <code>i</code> de 0 até m-1, <code>j</code> de 0 até n-1, lendo cada inteiro com <code>scanf</code>.
+  </li>
+  <li>
+    <strong>Leia o caractere da operação.</strong> Guarde em <code>char op</code>. Pense em como reconhecer <code>'+'</code> e <code>'x'</code>.
+  </li>
+  <li>
+    <strong>Leia a matriz <code>B</code>.</strong> Mesma lógica de <code>A</code>.
+  </li>
+  <li>
+    <strong>Decida pelo caractere.</strong> Use uma estrutura que ramifique (<code>if/else</code> ou <code>switch</code>) para <code>'+'</code> e <code>'x'</code>.
+  </li>
+  <li>
+    <strong>No caso de adição:</strong> some elemento a elemento. Sempre possível (mesmas dimensões).
+  </li>
+  <li>
+    <strong>No caso de multiplicação:</strong> <strong>primeiro verifique a condição</strong> (colunas de A == linhas de B). Em termos de <code>m</code> e <code>n</code>, isso é <code>m == n</code>. Se falhar → imprima <code>ERROR</code> e encerre.
+  </li>
+  <li>
+    <strong>Se a multiplicação é válida:</strong> use três loops. Lembre de <strong>zerar o resultado</strong> antes de acumular.
+  </li>
+  <li>
+    <strong>Imprima o resultado.</strong> Percorra o resultado e imprima cada linha separando os números por espaço, com uma linha por linha da matriz (aplique a formatação que os exemplos mostram).
+  </li>
+</ol>
+
+<div class="dica">
+<strong>Dicas de verificação:</strong>
+<ul>
+  <li>Confira a saída com os 4 exemplos dados: as duas somas e as duas multiplicações (incluindo o caso <code>ERROR</code>).</li>
+  <li>Teste um caso adicional seu: uma matriz 1×1 (o caso mais simples: soma e produto coincidem).</li>
+  <li>Confira a formatação: sem espaços extras no fim da linha, e <code>ERROR</code> escrito em letras <strong>maiúsculas</strong>.</li>
+</ul>
+</div>
+</section>
+
+<!-- ==================== 9. RESUMO ==================== -->
+<section>
+<h2>9. Resumo dos conceitos essenciais</h2>
+<table>
+  <tr><th>Conceito</th><th>O que você precisa lembrar</th></tr>
+  <tr><td>Matriz</td><td>Elementos do mesmo tipo em linhas × colunas; acesso <code>A[i][j]</code>.</td></tr>
+  <tr><td>Índices</td><td>Em C começam em 0; linha <code>i</code>, coluna <code>j</code>.</td></tr>
+  <tr><td>Row-Major</td><td>C guarda linhas contíguas; posição 1D = <code>i*n + j</code>.</td></tr>
+  <tr><td>Adição</td><td>Só com dimensões iguais; soma posição a posição.</td></tr>
+  <tr><td>Multiplicação</td><td>Colunas de A = linhas de B; soma dos produtos (3 loops).</td></tr>
+  <tr><td>Condição do ex11</td><td>Como A e B são iguais (m×n), exige <code>m == n</code>; senão <code>ERROR</code>.</td></tr>
+  <tr><td>Cache</td><td>Laço com linha fora, coluna dentro → acesso contíguo.</td></tr>
+</table>
+</section>
+
+</main>
+
+<footer>
+  Relatório didático gerado como apoio de estudo para o exercício ex11 — Manipulação de Matrizes 1.<br>
+  Material educativo; não contém a solução pronta, apenas a explicação dos conceitos para você construir seu próprio programa.
+</footer>
+
+</body>
+</html>
